@@ -80,10 +80,6 @@ Los datos no se comparten entre dispositivos ni usuarios. Las tiendas y la empre
 
 Autor: Raúl Zúñiga.
 
-## Guion para la exposición
-
-En [GUION_EXPOSICION.md](./GUION_EXPOSICION.md) se incluye un guion de lectura, con indicaciones para la demostración y respuestas a posibles preguntas.
-
 ## Subir el proyecto a GitHub
 
 GitHub almacena el código y su historial. GitHub Pages permite publicar la web. Subir el repositorio no activa por sí solo la publicación.
