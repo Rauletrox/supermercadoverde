@@ -1,5 +1,11 @@
-/* PAUTA · Criterio 2: CSS del sitio de inventario y de las dos páginas adicionales. */
+/* Actividad 1: estilos propios del inventario y de las páginas informativas. */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap");
+/* Criterios Semana 02 - Criterio 2 (20 puntos): importa el tema y las utilidades de Tailwind CSS.
+   Se utilizan en InventoryMenu, NewArticle y ProductFields, junto al CSS propio.
+   Se omite Preflight para conservar los estilos de la actividad anterior. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 :root {
   font-family: "DM Sans", sans-serif;
   color: #283c34;
@@ -322,12 +328,20 @@ td {
 .product-icon {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  background: #f5f6ed;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #fff;
   border: 1px solid #edf0e6;
   border-radius: 8px;
   font-size: 23px;
+}
+.product-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .product strong {
   color: #3e4d39;
@@ -605,7 +619,7 @@ footer {
 }
 .value-grid h2 {
   font-size: 18px;
-} /* PAUTA · Presentación visual de la página «Nuestras tiendas». */
+} /* Presentación visual de la página «Nuestras tiendas». */
 .store-banner {
   display: flex;
   align-items: center;
