@@ -40,10 +40,7 @@ export default function Stores() {
         <span>⌖</span>
         <div>
           <h2>Siempre hay un Mercado Verde cerca</h2>
-          <p>
-            Consulta las direcciones y horarios de nuestras sucursales de
-            ejemplo.
-          </p>
+          <p>Consulta las direcciones y horarios de nuestras sucursales de ejemplo.</p>
         </div>
       </div>
       <section className="store-grid">
@@ -71,10 +68,8 @@ export default function Stores() {
         ))}
       </section>
       <p className="local-note">
-        Las sucursales, direcciones y horarios son ficticios y se presentan con
-        fines académicos.
+        Las sucursales, direcciones y horarios son ficticios y se presentan con fines académicos.
       </p>
     </>
   );
 }
-

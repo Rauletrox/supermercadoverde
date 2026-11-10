@@ -1,6 +1,6 @@
 # Mercado Verde — Gestión de inventario
 
-Actividad formativa 2: «Implementando gestión de estado en componentes frontend con React». Proyecto académico de Desarrollo Frontend II. Sitio en español construido con HTML, CSS, JavaScript y React, con Vite como herramienta de desarrollo y Tailwind CSS para la interfaz del menú de artículos y el formulario.
+Actividad sumativa de la semana 3: «Desarrollando sitios web con React avanzado». Continuación de las actividades formativas anteriores. Proyecto académico de Desarrollo Frontend II. Sitio en español construido con HTML, CSS, JavaScript y React, con Vite como herramienta de desarrollo y Tailwind CSS para la interfaz del menú, el formulario, el detalle y el carrito.
 
 ## Ejecutar
 
@@ -25,6 +25,8 @@ El primer comando genera la versión de producción en `dist/`; el segundo permi
 - `/`: página principal con inventario, resumen, búsqueda, filtros por categoría y estado, creación, edición y eliminación de productos.
 - `/articulos/nuevo`: formulario para ingresar nombre, marca, tipo, categoría, precio, stock y stock mínimo. Al guardar, navega al listado.
 - `/articulos`: tabla de todos los artículos del estado global, con búsqueda, filtros, edición y eliminación.
+- `/articulos/:productId`: detalle de un artículo y selección de unidades para el carrito.
+- `/carrito`: cantidades reservadas, ajuste de unidades, subtotales y total, con inventario sincronizado.
 - `/quienes-somos`: presentación, misión, visión y valores del supermercado.
 - `/tiendas`: tres sucursales de ejemplo con direcciones y horarios.
 
@@ -42,24 +44,30 @@ React Router utiliza `HashRouter`, `Routes`, `Route` y `NavLink`. El menú infer
 - `src/components/InventoryMenu.jsx`: nuevo menú de ingreso y listado.
 - `src/utils/productForm.js`: lectura y validación del formulario compartido.
 - `src/utils/productStorage.js`: carga, compatibilidad con datos previos y guardado local.
-- `src/data/products.js`: productos iniciales y categorías.
+- `src/data/products.js`: productos iniciales.
+- `src/constants/inventory.js`: categorías, rutas, acciones, filtros y mensajes compartidos.
 - `src/utils/inventory.js`: formato de precios y reglas de stock compartidas.
 
 El botón «Ver productos por reponer» activa el filtro «Por reponer», que incluye stock bajo y agotado, y limpia la búsqueda y la categoría. Los filtros individuales siguen disponibles. Si falla el guardado en `localStorage`, los cambios permanecen en memoria y se muestra el aviso correspondiente al guardar o eliminar, sin reemplazarlo por un mensaje de éxito.
 
-## Estado global y framework CSS
+## Estado global, almacenamiento y estilos
 
-`InventoryProvider` envuelve el enrutador. Las páginas consumen `products`, `saveProduct` y `deleteProduct` mediante `useInventory`. El estado se mantiene al cambiar entre páginas, incluso cuando el navegador bloquea `localStorage`; al recargar se recuperan solo los cambios que pudieron persistirse. `useReducer` actualiza el inventario sin mutarlo y `useEffect` sincroniza los cambios con el almacenamiento local. Los mensajes se muestran fuera de las rutas para conservarlos después de navegar.
+`InventoryProvider` envuelve el enrutador. `useProducts` consume la lista; `useInventoryActions` ofrece funciones estables para agregar, editar y eliminar; `useInventoryMessage` consume los avisos y `useCart` comparte las reservas. Los contextos están separados y sus valores se memoizan: cerrar un aviso no propaga cambios al consumidor de productos. `useReducer` actualiza la lista sin mutarla y `useEffect` sincroniza los cambios con el almacenamiento.
 
-Los artículos anteriores que no tienen marca o tipo reciben «Sin marca» y su categoría como tipo. Los productos de demostración incluyen marcas ficticias. El filtro «Por reponer» incluye tanto stock bajo como agotado.
+Los productos nuevos usan `crypto.randomUUID()` y las acciones de ingreso y edición son distintas. Un identificador duplicado se rechaza y nunca sobrescribe un artículo existente. La aplicación requiere un navegador con Web Crypto en un contexto seguro (HTTPS o localhost).
 
-Tailwind CSS está instalado mediante `tailwindcss` y `@tailwindcss/vite`, con el plugin configurado en `vite.config.js`. El menú, los campos del formulario y la página de ingreso usan utilidades de distribución, espaciado, colores, bordes y adaptación a pantallas. Se importan las capas de tema y utilidades sin Preflight para conservar el diseño CSS de la actividad 1, siguiendo la [documentación oficial](https://tailwindcss.com/docs/preflight#disabling-preflight).
+`localStorage` conserva la clave `mercado-verde-products` con formato `{ version: 2, products: [...], cart: [...] }`. Los registros de versión 1 se recuperan con un carrito vacío. Los arreglos anteriores sin versión se migran en memoria, convirtiendo IDs numéricos a texto y completando marca, tipo o icono si faltan. Se comprueban campos, longitudes, cantidades enteras, categorías, iconos y unicidad de identificadores. Datos inválidos o bloqueados producen un aviso. Los formatos de versiones futuras no se sobrescriben: las modificaciones quedan solo en memoria. El formato nuevo se escribe después de una modificación válida.
+
+Las reglas reutilizables y las expresiones regulares están en `src/utils/productValidation.js`. El formulario compartido usa `useProductForm` y muestra el error específico junto a cada campo, con asociación accesible y foco en el primer error. La validación de aplicación funciona con `noValidate` para evitar mensajes nativos distintos entre navegadores.
+
+Tailwind CSS se integra con `@tailwindcss/vite`. `src/styles.css` define el orden `theme`, `base`, `components`, `utilities`. `src/styles/global.css` contiene la base tipográfica y accesibilidad; `src/styles/components.css`, componentes comunes y páginas originales; Tailwind, distribución adaptable y utilidades del nuevo menú y formulario. No se importa Preflight. Se retiraron los estilos de etiquetas y grillas duplicados del modal. Guía: [capas de estilos de Tailwind](https://tailwindcss.com/docs/adding-custom-styles).
+
+Las fotos están en `src/assets/img` y se importan desde `ProductImage.jsx`. Los artículos sin foto o con error de carga muestran un icono. El archivo vacío de leche fue retirado; las cinco imágenes válidas siguen disponibles.
 
 ## Verificación de la actividad 2
 
 ```bash
-npm test
-npm run build
+npm run check
 npm run dev
 ```
 
@@ -87,7 +95,7 @@ GitHub almacena el código y su historial. GitHub Pages permite publicar la web.
 ### 1. Crear un repositorio vacío
 
 1. Inicia sesión en GitHub y selecciona **New repository**.
-2. Usa, por ejemplo, `Exp1_S1_RaulZuniga` como nombre.
+2. Usa, por ejemplo, `Exp1_S2_RaulZuniga` como nombre.
 3. Para seguir esta guía con GitHub Free, selecciona **Public**.
 4. No agregues un README, `.gitignore` ni licencia desde GitHub: el proyecto ya contiene sus archivos locales.
 5. Selecciona **Create repository** y copia su URL HTTPS.
@@ -103,7 +111,7 @@ git init
 git add .
 git commit -m "Crear sitio de inventario Mercado Verde"
 git branch -M main
-git remote add origin https://github.com/TU_USUARIO/Exp1_S1_RaulZuniga.git
+git remote add origin https://github.com/TU_USUARIO/Exp1_S2_RaulZuniga.git
 git push -u origin main
 ```
 
@@ -133,9 +141,9 @@ No tienes que crear ni copiar estos archivos nuevamente. El sitio todavía no es
 Las direcciones publicadas tendrán esta forma (reemplaza el usuario y repositorio por los tuyos):
 
 ```text
-https://TU_USUARIO.github.io/Exp1_S1_RaulZuniga/#/
-https://TU_USUARIO.github.io/Exp1_S1_RaulZuniga/#/quienes-somos
-https://TU_USUARIO.github.io/Exp1_S1_RaulZuniga/#/tiendas
+https://TU_USUARIO.github.io/Exp1_S2_RaulZuniga/#/
+https://TU_USUARIO.github.io/Exp1_S2_RaulZuniga/#/quienes-somos
+https://TU_USUARIO.github.io/Exp1_S2_RaulZuniga/#/tiendas
 ```
 
 HashRouter mantiene el cumplimiento del requisito de navegación con React Router.
@@ -189,6 +197,26 @@ GitHub Actions generará y publicará la nueva versión. No es necesario subir `
 | No se inicia la publicación | Confirma que Pages utiliza GitHub Actions y que envías cambios a la rama `main`. |
 | `origin` ya existe | Revisa `git remote -v` y utiliza el remoto existente o corrige su URL. |
 | No aparecen los productos guardados en localhost | Es normal: el dominio publicado utiliza un almacenamiento local diferente. |
+
+## Funcionalidades de la semana 3
+
+El filtro por categoría cambia la lista visible sin modificar el inventario original. Seleccionar el nombre o la foto de un artículo abre su detalle. Agregar o aumentar unidades en el carrito descuenta el stock disponible; disminuir, quitar o vaciar devuelve las unidades. Los productos agotados no pueden agregarse y las cantidades se validan también en el reducer.
+
+Inventario y carrito se guardan juntos para mantener su consistencia al recargar. No se permite eliminar del catálogo un artículo reservado. La edición administrativa indica stock disponible y el carrito utiliza los precios actuales de los productos.
+
+Consulta [MEJORAS_S3.md](./MEJORAS_S3.md) para las reglas, archivos y una demostración paso a paso.
+
+## Controles de calidad
+
+- `npm run lint`: ESLint revisa JavaScript/JSX, uso de hooks, variables, claves y prohíbe importar `react-router-dom`.
+- `npm run format` / `npm run format:check`: aplica o revisa formato con Prettier.
+- `npm run test:unit`: reglas, UUID, reducer, filtros y migración/validación de almacenamiento.
+- `npm run test:ui`: formularios, navegación, persistencia bloqueada y estabilidad de contextos con Testing Library y Vitest/JSDOM.
+- `npm run check`: ejecuta lint, formato, todas las pruebas y compilación.
+
+Se ejecutan los controles antes del despliegue y en las propuestas de cambios mediante GitHub Actions. Se requieren Node.js 22.23 o posterior compatible y las dependencias del archivo de bloqueo (`npm ci`).
+
+Consulta [MEJORAS_S2.md](./MEJORAS_S2.md) para la correspondencia de las diez observaciones con sus cambios.
 
 ## Documentación de referencia
 

@@ -5,6 +5,6 @@ export default defineConfig({
   // Las rutas relativas permiten publicar en / o en /nombre-del-repositorio/.
   // HashRouter mantiene las páginas internas después del símbolo #.
   base: "./",
-  // PAUTA S2 · Criterio 2 (20 puntos): integra el framework Tailwind CSS en la compilación con Vite.
+  // Criterios Semana 02 · Criterio 2: integra el framework Tailwind CSS en la compilación con Vite.
   plugins: [tailwindcss()],
 });

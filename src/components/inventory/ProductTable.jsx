@@ -1,10 +1,16 @@
 import React from "react";
+import { Link } from "react-router";
 import ProductImage from "./ProductImage";
+import { STATUS, articlePath } from "../../constants/inventory.js";
 import { money, productStatus } from "../../utils/inventory";
 
 // PAUTA S2 · Criterio 6 (40 puntos): tabla de artículos del inventario.
 // products.map genera una fila por artículo y muestra nombre, marca, tipo y datos de stock.
-export default function ProductTable({ products: filtered, onEdit: setEditing, onDelete: setPendingDelete }) {
+export default function ProductTable({
+  products: filtered,
+  onEdit: setEditing,
+  onDelete: setPendingDelete,
+}) {
   return (
     <div className="table-scroll">
       <table aria-label="Artículos del inventario">
@@ -24,15 +30,13 @@ export default function ProductTable({ products: filtered, onEdit: setEditing, o
           {filtered.map((p) => (
             <tr key={p.id}>
               <td>
-                <div className="product">
+                <Link className="product product-detail-link" to={articlePath(p.id)}>
                   <ProductImage product={p} />
                   <span>
                     <strong>{p.name}</strong>
-                    <small>
-                      SKU-{String(p.id).slice(-5).padStart(5, "0")}
-                    </small>
+                    <small>SKU-{String(p.id).slice(-5).padStart(5, "0")}</small>
                   </span>
-                </div>
+                </Link>
               </td>
               <td>{p.brand}</td>
               <td>{p.type}</td>
@@ -44,17 +48,14 @@ export default function ProductTable({ products: filtered, onEdit: setEditing, o
               </td>
               <td>
                 <span
-                  className={`badge ${productStatus(p) === "Disponible" ? "green" : productStatus(p) === "Agotado" ? "red" : "amber"}`}
+                  className={`badge ${productStatus(p) === STATUS.AVAILABLE ? "green" : productStatus(p) === STATUS.EMPTY ? "red" : "amber"}`}
                 >
                   <span>●</span> {productStatus(p)}
                 </span>
               </td>
               <td>
                 <div className="actions">
-                  <button
-                    aria-label={`Editar ${p.name}`}
-                    onClick={() => setEditing(p)}
-                  >
+                  <button aria-label={`Editar ${p.name}`} onClick={() => setEditing(p)}>
                     Editar
                   </button>
                   <button
@@ -71,9 +72,7 @@ export default function ProductTable({ products: filtered, onEdit: setEditing, o
         </tbody>
       </table>
       {filtered.length === 0 && (
-        <div className="empty">
-          No hay productos que coincidan con tu búsqueda.
-        </div>
+        <div className="empty">No hay productos que coincidan con tu búsqueda.</div>
       )}
     </div>
   );

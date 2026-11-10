@@ -1,6 +1,7 @@
+import { ROUTES } from "./constants/inventory.js";
 import React from "react";
-import { HashRouter, Routes, Route, Link } from "react-router-dom";
-import { InventoryProvider, useInventory } from "./context/InventoryContext";
+import { HashRouter, Routes, Route, Link } from "react-router";
+import { InventoryProvider, useInventoryMessage } from "./context/InventoryContext";
 import InventoryMenu from "./components/InventoryMenu";
 import NewArticle from "./pages/NewArticle";
 import Articles from "./pages/Articles";
@@ -8,6 +9,8 @@ import Navigation from "./components/Navigation";
 import Inventory from "./pages/Inventory";
 import About from "./pages/About";
 import Stores from "./pages/Stores";
+import Cart from "./pages/Cart";
+import ArticleDetail from "./pages/ArticleDetail";
 import NotFound from "./pages/NotFound";
 
 // Criterios Semana 02 - Criterio 1 (40 puntos): navegación con React Router y gestión global de estado.
@@ -17,7 +20,7 @@ export default function App() {
     <InventoryProvider>
       <HashRouter>
         <header className="header">
-          <Link to="/" className="brand">
+          <Link to={ROUTES.HOME} className="brand">
             <span className="brand-icon">✳</span>
             <span>
               mercado<span className="brand-light">verde</span>
@@ -32,15 +35,15 @@ export default function App() {
           <InventoryMenu />
           {/* Criterios Semana 02 - Criterio 6: rutas independientes para ingresar y listar artículos. */}
           <Routes>
-            <Route path="/articulos/nuevo" element={<NewArticle />} />
-            <Route path="/articulos" element={<Articles />} />
-            <Route path="/" element={<Inventory />} />
-            <Route path="/quienes-somos" element={<About />} />
-            <Route path="/tiendas" element={<Stores />} />
-            <Route
-              path="*"
-              element={<NotFound />}
-            />
+            {/* S3: detalle de artículos y carrito con stock sincronizado. */}
+            <Route path={ROUTES.CART} element={<Cart />} />
+            <Route path={ROUTES.DETAIL} element={<ArticleDetail />} />
+            <Route path={ROUTES.NEW} element={<NewArticle />} />
+            <Route path={ROUTES.ARTICLES} element={<Articles />} />
+            <Route path={ROUTES.HOME} element={<Inventory />} />
+            <Route path={ROUTES.ABOUT} element={<About />} />
+            <Route path={ROUTES.STORES} element={<Stores />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <footer>
@@ -54,13 +57,16 @@ export default function App() {
   );
 }
 
-
 function InventoryMessage() {
-  const { message, dismissMessage } = useInventory();
-  return message && (
-    <div className="toast" role="status">
-      {message}
-      <button aria-label="Cerrar mensaje" onClick={dismissMessage}>×</button>
-    </div>
+  const { message, dismissMessage } = useInventoryMessage();
+  return (
+    message && (
+      <div className="toast" role="status">
+        {message}
+        <button aria-label="Cerrar mensaje" onClick={dismissMessage}>
+          ×
+        </button>
+      </div>
+    )
   );
 }

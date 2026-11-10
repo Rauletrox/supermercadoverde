@@ -2,7 +2,7 @@
 // Esta lista inicializa el inventario global cuando no existen datos válidos guardados.
 export const initialProducts = [
   {
-    id: 1,
+    id: "1",
     brand: "Huerto Verde",
     type: "Fruta fresca",
     name: "Manzana roja",
@@ -13,7 +13,7 @@ export const initialProducts = [
     icon: "🍎",
   },
   {
-    id: 2,
+    id: "2",
     brand: "Lácteos del Valle",
     type: "Leche entera",
     name: "Leche entera · 1 L",
@@ -24,7 +24,7 @@ export const initialProducts = [
     icon: "🥛",
   },
   {
-    id: 3,
+    id: "3",
     brand: "Pan del Barrio",
     type: "Pan envasado",
     name: "Pan integral",
@@ -35,7 +35,7 @@ export const initialProducts = [
     icon: "🍞",
   },
   {
-    id: 4,
+    id: "4",
     brand: "Granos del Sur",
     type: "Arroz",
     name: "Arroz grano largo · 1 kg",
@@ -46,7 +46,7 @@ export const initialProducts = [
     icon: "🍚",
   },
   {
-    id: 5,
+    id: "5",
     brand: "Huerto Verde",
     type: "Verdura fresca",
     name: "Tomate",
@@ -57,7 +57,7 @@ export const initialProducts = [
     icon: "🍅",
   },
   {
-    id: 6,
+    id: "6",
     brand: "Lácteos del Valle",
     type: "Yogur",
     name: "Yogur natural",
@@ -67,11 +67,4 @@ export const initialProducts = [
     price: 690,
     icon: "🥣",
   },
-];
-export const categories = [
-  "Frutas y verduras",
-  "Lácteos",
-  "Panadería",
-  "Abarrotes",
-  "Otros",
 ];

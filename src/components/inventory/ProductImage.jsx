@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import apple from "../../assets/img/manzana_roja.jpg";
-import milk from "../../assets/img/Leche_entera.jpeg";
 import bread from "../../assets/img/pan_integral.jpeg";
 import rice from "../../assets/img/arroz_grano_largo.jpg";
 import tomato from "../../assets/img/tomate.jpg";
@@ -10,7 +9,6 @@ import yogurt from "../../assets/img/yogut_natural.jpg";
 // Si una foto está vacía o no carga, se muestra el icono como respaldo.
 const productImages = {
   "🍎": apple,
-  "🥛": milk,
   "🍞": bread,
   "🍚": rice,
   "🍅": tomato,

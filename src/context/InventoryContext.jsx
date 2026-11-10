@@ -1,44 +1,98 @@
-import React, { createContext, useContext, useEffect, useReducer } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react";
 import { inventoryReducer } from "./inventoryReducer.js";
-import { loadProducts, persistProducts, STORAGE_WARNING } from "../utils/productStorage.js";
+import { loadInventory, persistProducts } from "../utils/productStorage.js";
+import { ACTIONS, MESSAGES } from "../constants/inventory.js";
 
-const InventoryContext = createContext(null);
+const CartContext = createContext(null);
+const ProductsContext = createContext(null);
+const ActionsContext = createContext(null);
+const MessageContext = createContext(null);
 
-// PAUTA S2 · Criterio 1 (40 puntos): Context y useReducer implementan el estado global.
-// products es la lista compartida; useInventory permite consumirla sin duplicarla en cada página.
-// El proveedor permanece montado al navegar, por lo que conserva los artículos entre rutas.
+// PAUTA S2 · Criterio 1: contextos separados evitan propagar avisos a los consumidores de productos.
 export function InventoryProvider({ children }) {
   const [state, dispatch] = useReducer(inventoryReducer, undefined, () => ({
-    products: loadProducts(), message: "", revision: 0,
+    ...loadInventory(),
+    revision: 0,
   }));
-
-  // Persistencia complementaria: sincroniza el estado global con localStorage después de una operación.
-  // Si falla, conserva los artículos en memoria y muestra el aviso de almacenamiento.
   useEffect(() => {
-    if (state.revision > 0 && !persistProducts(state.products)) {
-      dispatch({ type: "message", message: STORAGE_WARNING });
+    if (state.revision === 0) return;
+    if (!state.canPersist || !persistProducts(state.products, state.cart)) {
+      dispatch({
+        type: ACTIONS.MESSAGE,
+        message: state.canPersist ? MESSAGES.STORAGE : MESSAGES.FUTURE_STORAGE,
+      });
     }
-  }, [state.products, state.revision]);
-
-  function saveProduct(product) {
-    dispatch({ type: "save", product });
-  }
-
+  }, [state.products, state.cart, state.revision, state.canPersist]);
+  const addProduct = useCallback((product) => dispatch({ type: ACTIONS.ADD, product }), []);
+  const updateProduct = useCallback((product) => dispatch({ type: ACTIONS.UPDATE, product }), []);
+  const deleteProduct = useCallback((id) => dispatch({ type: ACTIONS.DELETE, id }), []);
+  const dismissMessage = useCallback(() => dispatch({ type: ACTIONS.MESSAGE, message: "" }), []);
+  const addToCart = useCallback(
+    (id, quantity) => dispatch({ type: ACTIONS.CART_ADD, id, quantity }),
+    [],
+  );
+  const setCartQuantity = useCallback(
+    (id, quantity) => dispatch({ type: ACTIONS.CART_SET, id, quantity }),
+    [],
+  );
+  const removeFromCart = useCallback((id) => dispatch({ type: ACTIONS.CART_REMOVE, id }), []);
+  const clearCart = useCallback(() => dispatch({ type: ACTIONS.CART_CLEAR }), []);
+  const actions = useMemo(
+    () => ({
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      addToCart,
+      setCartQuantity,
+      removeFromCart,
+      clearCart,
+    }),
+    [
+      addProduct,
+      updateProduct,
+      deleteProduct,
+      addToCart,
+      setCartQuantity,
+      removeFromCart,
+      clearCart,
+    ],
+  );
+  const notification = useMemo(
+    () => ({ message: state.message, dismissMessage }),
+    [state.message, dismissMessage],
+  );
   return (
-    <InventoryContext.Provider value={{
-      products: state.products,
-      message: state.message,
-      saveProduct,
-      deleteProduct: (id) => dispatch({ type: "delete", id }),
-      dismissMessage: () => dispatch({ type: "message", message: "" }),
-    }}>
-      {children}
-    </InventoryContext.Provider>
+    <ActionsContext.Provider value={actions}>
+      <ProductsContext.Provider value={state.products}>
+        <CartContext.Provider value={state.cart}>
+          <MessageContext.Provider value={notification}>{children}</MessageContext.Provider>
+        </CartContext.Provider>
+      </ProductsContext.Provider>
+    </ActionsContext.Provider>
   );
 }
+function useRequiredContext(context) {
+  const value = useContext(context);
+  if (value === null) throw new Error("El inventario requiere InventoryProvider.");
+  return value;
+}
+export function useProducts() {
+  return useRequiredContext(ProductsContext);
+}
+export function useInventoryActions() {
+  return useRequiredContext(ActionsContext);
+}
+export function useInventoryMessage() {
+  return useRequiredContext(MessageContext);
+}
 
-export function useInventory() {
-  const inventory = useContext(InventoryContext);
-  if (!inventory) throw new Error("useInventory requiere InventoryProvider.");
-  return inventory;
+export function useCart() {
+  return useRequiredContext(CartContext);
 }
